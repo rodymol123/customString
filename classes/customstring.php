@@ -38,6 +38,7 @@ class customString
 
 	function filterWithout($filterWords)
 	{
+		$filter = [];
 		foreach($filterWords as $word)
 		{
 			array_push($filter, strtolower($word));
