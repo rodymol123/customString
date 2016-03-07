@@ -3,20 +3,32 @@
 class customString
 {
 	private $value,
-			$frequentieTable,
-			$filterWords,
-			$words,
-			$urls,
-			$hashtags,
-			$users,
-			$length;
+	$frequentieTable,
+	$filterWithout,
+	$filterWith,
+	$words,
+	$urls,
+	$hashtags,
+	$users,
+	$length;
 
 	function utf8_for_print($string)
-    {
+	{
 		$string =  htmlspecialchars($string, ENT_NOQUOTES, "UTF-8");
 		return preg_replace('/[^\x{0009}\x{000a}\x{000d}\x{0020}-\x{D7FF}\x{E000}-\x{FFFD}]+/u',
-                        ' ', $string);
-    }
+		' ', $string);
+	}
+
+	function countWord($word) {
+		if(isset($this->frequentieTable[$word]))
+		{
+			$this->frequentieTable[$word]++;
+		}
+		else
+		{
+			$this->frequentieTable[$word] = 1;
+		}
+	}
 
 	function customString($inputValue)
 	{
@@ -24,12 +36,16 @@ class customString
 		$this->length = strlen($this->value);
 	}
 
-	function setFilterWords($filterWords)
+	function filterWithout($filterWords)
 	{
-		foreach($filterWords as $woord)
-		{
-			array_push($this->filterWords, strtolower($woord));
-		}
+		$this->filterWithout = $filterWords;
+		return $this;
+	}
+
+	function filterWith($filterWords)
+	{
+		$this->filterWith = $filterWords;
+		return $this;
 	}
 
 	private function setWords()
@@ -46,7 +62,7 @@ class customString
 			$word = stripslashes($word);
 
 			if(filter_var($word, FILTER_VALIDATE_URL))
-				array_push($this->urls, $word);
+			array_push($this->urls, $word);
 			else
 			{
 				if($word[0] == "#")
@@ -54,7 +70,7 @@ class customString
 					$word = preg_replace('/[^ \w]+/', "", $word);
 					array_push($this->hashtags, $this->utf8_for_print($word));
 				} elseif($word[0] == "@")
-					array_push($this->users, $this->utf8_for_print($word));
+				array_push($this->users, $this->utf8_for_print($word));
 
 				$word = strtolower($word);
 				$word = preg_replace('/[^ \w]+/', "", $word);
@@ -69,12 +85,19 @@ class customString
 
 		foreach($this->words as $word)
 		{
-			if(!in_array($word, $this->filterWords))
+			if(count($this->filterWith) > 0)
 			{
-				if(isset($this->frequentieTable[$word]))
-					$this->frequentieTable[$word]++;
-				else
-					$this->frequentieTable[$word] = 1;
+				if(in_array($word, $this->filterWith) && !in_array($word, $this->filterWithout))
+				{
+					$this->countWord($word);
+				}
+			}
+			else
+			{
+				if(!in_array($word, $this->filterWithout))
+				{
+					$this->countWord($word);
+				}
 			}
 		}
 	}
@@ -110,7 +133,7 @@ class customString
 		sort($this->users, SORT_NATURAL);
 		sort($this->hashtags, SORT_NATURAL);
 		sort($this->urls, SORT_NATURAL);
-		ksort($this->frequentieTable, SORT_NATURAL);
+		arsort($this->frequentieTable, SORT_NUMERIC);
 	}
 
 }
