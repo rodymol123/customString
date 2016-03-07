@@ -87,15 +87,30 @@ class customString
 		{
 			if(count($this->filterWith) > 0)
 			{
-				if(in_array($word, $this->filterWith) && !in_array($word, $this->filterWithout))
+				if(!empty($this->filterWithout))
 				{
-					$this->countWord($word);
+					if(in_array($word, $this->filterWith) && !in_array($word, $this->filterWithout))
+					{
+						$this->countWord($word);
+					}
+				}
+				else {
+					if(in_array($word, $this->filterWith))
+					{
+						$this->countWord($word);
+					}
 				}
 			}
 			else
 			{
-				if(!in_array($word, $this->filterWithout))
+				if(!empty($this->filterWithout))
 				{
+					if(!in_array($word, $this->filterWithout))
+					{
+						$this->countWord($word);
+					}
+				}
+				else {
 					$this->countWord($word);
 				}
 			}
