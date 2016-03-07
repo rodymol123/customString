@@ -38,13 +38,22 @@ class customString
 
 	function filterWithout($filterWords)
 	{
-		$this->filterWithout = $filterWords;
+		foreach($filterWords as $word)
+		{
+			array_push($filter, strtolower($word));
+		}
+		$this->filterWithout = $filter;
 		return $this;
 	}
 
 	function filterWith($filterWords)
 	{
-		$this->filterWith = $filterWords;
+		$filter = [];
+		foreach($filterWords as $word)
+		{
+			array_push($filter, strtolower($word));
+		}
+		$this->filterWith = $filter;
 		return $this;
 	}
 
