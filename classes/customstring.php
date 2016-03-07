@@ -12,11 +12,11 @@ class customString
 			$length;
 
 	function utf8_for_print($string)
-  {
+    {
 		$string =  htmlspecialchars($string, ENT_NOQUOTES, "UTF-8");
-    return preg_replace('/[^\x{0009}\x{000a}\x{000d}\x{0020}-\x{D7FF}\x{E000}-\x{FFFD}]+/u',
+		return preg_replace('/[^\x{0009}\x{000a}\x{000d}\x{0020}-\x{D7FF}\x{E000}-\x{FFFD}]+/u',
                         ' ', $string);
-  }
+    }
 
 	function customString($inputValue)
 	{
@@ -26,7 +26,10 @@ class customString
 
 	function setFilterWords($filterWords)
 	{
-		$this->filterWords = $filterWords;
+		foreach($filterWords as $woord)
+		{
+			array_push($this->filterWords, strtolower($woord));
+		}
 	}
 
 	private function setWords()
